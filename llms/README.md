@@ -23,3 +23,68 @@
     * Scale efficiently
     * Parallel process
     * Attention to input meaning
+* ``Attention is all you need`` paper proposes a neural network architecture that replaces traditional recurrent neural networks (RNNs) and convolutional neural networks (CNNs) with an entirely attention-based mechanism.
+#### 1.1.3. Transformers architecture
+* Here's a summarized version of how Transformers work in basic steps:
+1. **Tokenization:** Convert input text into tokens.
+2. **Embedding:** Represent each token as a d_model-dimensional vector.
+3. **Positional Encoding:** Add positional information to embeddings.
+4. **Self-Attention:** Compute attention scores for each token based on its relationship with all other tokens.
+5. **Aggregation:** Combine token representations using attention scores.
+6. **Feed-Forward Networks:** Pass aggregated vectors through feed-forward neural networks.
+7. **Layer Normalization & Residual Connection:** Normalize outputs and add them to the original inputs.
+8. **Stacking:** Repeat the self-attention and feed-forward steps for multiple layers.
+9. **Output:** Produce a sequence for sequence-to-sequence tasks or a pooled representation for classification tasks.
+10. **Final Layer:** Depending on the task, transform the output using a linear layer followed by a task-specific activation function (e.g., softmax for classification).
+* **Note:** For models like BERT, only the encoder part of the Transformer is used. For models like GPT, only the decoder part is used. The original Transformer model, as introduced in the "Attention Is All You Need" paper, uses both encoders and decoders for sequence-to-sequence tasks like translation.
+#### 1.1.4. Generating text with transformers
+* In the encoder only models (e.g. BERT), we can still use sequence-to-sequence tasks but the output length has to be the same as the input length.
+* However, in the encoder-decoder models (e.g. BART, T5), the output length could be different than the input length.
+* In the decoder only models (e.g. GPT, BLOOM, LLaMA), generate sequences from scratch or conditioned on some provided input. Generalize tasks well.
+#### 1.1.5. Prompting and prompt engineering
+* **In-context learning (ICL)**: Providing examples in the context window (prompt) so that the model grasps the idea what we are trying to convey. It has three types of inferences:
+    * Zero shot inference
+    * One shot inference
+    * Few shot inference
+* One shot inference involves providing an example question with answer followed by a second question to be answered by the LLM.  Few shot inference provides multiple example prompts and answers while zero shot provides only one prompt to be answered by the LLM.
+#### 1.1.6. Generative configurations
+* The upcoming inference parameters are not learned parameters in the training! They are invoked at the inference step.
+* **Max new tokens:** Limits the maximum number for tokens inferenced.
+* ***Greedy vs. Random Sampling:*** The word/token with the highest probability is selected on greedy sampling. In the random(-weighted) sampling, the tokens will be selected according to their probability score, not the highest score strictly. So, the $3^{rd}$ predicted token with $4.7\%$ probability could be selected as well even though the chances are lower. To limit the random sampling to create more meaningful but less random outputs, we have these parameters:
+    * **Sample top k:** Select a sample among the top $k$ samples with the highest probability.
+    * **Sample top p:** Select a sample among the top ranked consecutive results by probability and *with a cumulative probability* $<=p$.
+        * Again, don't forget: ``cumulative probability!``
+* **Temperature:** Changes the shape of the probability distribution the model calculates for the next token. Here is a passage from GPT-4:
+    ***
+    ### The Temperature Parameter in Language Models (LLMs)
+    The temperature parameter in LLMs is a hyperparameter utilized during the softmax operation to control the randomness of the model's outputs.
+    #### 1. **Softmax Operation**:
+    When a language model produces logits (raw prediction scores) for each possible next token, these logits are transformed into a probability distribution using the softmax function:
+
+    $\large P(i) = \frac{e^{z_i}}{\sum_j e^{z_j}}$
+
+    Here, $P(i)$ is the probability of token $ i $, and $ z_i $ is its corresponding logit.
+    #### 2. **Temperature**:
+    Before the logits undergo the softmax function, they can be scaled using a temperature $ T $. The updated equation becomes:
+
+    $\large P(i) = \frac{e^{z_i/T}}{\sum_j e^{z_j/T}}$
+
+    The temperature $ T $ adjusts the distribution as follows:
+    - $ T = 1 $: The original distribution remains unchanged.
+    - $ T > 1 $: The distribution becomes "softer" or "flatter," leading to ***more randomness*** _(i.e. more creative)_ in the model's outputs.
+    - $ T < 1 $: The distribution becomes "sharper," and the model becomes ***more deterministic*** in its outputs.
+    #### 3. **Visualizing the Effect**:
+    Consider a hypothetical scenario:
+    - Let's assume for a particular context, the model produces logits: $ z_1=2, z_2=1, z_3=0 $.
+    - Without temperature i.e., $ T=1 $, the probabilities might look like: $ P_1=0.67, P_2=0.24, P_3=0.09 $.
+    - With a higher temperature, $ T=2 $, the probabilities become closer: $ P_1=0.44, P_2=0.33, P_3=0.23 $.
+    - With a lower temperature, $ T=0.5 $, the probabilities are more skewed towards the top choice: $ P_1=0.88, P_2=0.11, P_3=0.01 $.
+
+    If you visualize these probabilities, the bars will appear distinct without temperature, more evenly sized with a higher temperature, and highly skewed with a lower temperature.
+
+    In summary, the temperature parameter is crucial when sampling from language models, offering a balance between randomness (exploration) and adhering to the most likely outputs (exploitation).
+    ***
+* As far as I understand, this is meaningful when `random sampling` takes place. When it's a greedy choice, the model picks the highest probability anyway no matter what the distribution indicates since the weighted probabilities don't affect the order.
+![temperature_config.png](assets/temperature_config.png)
+#### 1.1.7. Generative AI project lifecycle
+* x
