@@ -87,4 +87,17 @@
 * As far as I understand, this is meaningful when `random sampling` takes place. When it's a greedy choice, the model picks the highest probability anyway no matter what the distribution indicates since the weighted probabilities don't affect the order.
 ![temperature_config.png](assets/temperature_config.png)
 #### 1.1.7. Generative AI project lifecycle
-* x
+* Define your task first: Essay writing, summarization, translation, information retrieval, invoke APIs and actions etc.
+* Lifecycle:
+    * Define scope
+    * Select model
+        * Pretrained or train your own
+    * Adapt and align model
+        * Prompt engineering
+        * Fine-tuning
+        * Align with human feedback
+        * Evaluate
+    * Application integration
+        * Optimize & deploy
+        * Augment the model to your usage, limitations etc.
+#### 1.1.8. 
