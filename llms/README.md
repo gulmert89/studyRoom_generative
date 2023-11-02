@@ -100,4 +100,56 @@
     * Application integration
         * Optimize & deploy
         * Augment the model to your usage, limitations etc.
-#### 1.1.8. 
+### 1.2. LLM pre-training and scaling laws
+#### 1.2.1. Pre-training large language models
+* There are petabytes of data on the internet. When a _data quality filter_ is applied, there could be 1-3% of the original tokens left.
+* **Encoder-only (a.k.a. autoencoding) models**
+    * Masked Language Modeling (MLM)
+        * `The teacher <MASK> the student...`
+    * **Objective:** Reconstruct text ("denoising")
+        * `The teacher |teaches| the student...`
+        * ``----> |bidirectional context| <----``
+    * Good use cases:
+        * Sentiment analysis
+        * NER
+        * Word classification
+    * Example models: BERT, ROBERTA
+* **Decoder-only (a.k.a. autoregressive) models**
+    * Causal Language Modeling (CLM)
+        * `The teacher ?`
+    * **Objective:** Predict next token
+        * `The teacher |teaches|`
+        * `----> |unidirectional context|`
+    * Good use cases:
+        * Text generation
+        * Other emergent behavior (depends on model size)
+    * Example models: GPT, BLOOM
+* **Encoder-Decoder models (sequence-to-sequence) models**
+    * Span Corruption
+        * `The teacher <MASK> <MASK> student`
+        * `The teacher <X> student` where `<X>` is _sentinel token_.
+    * **Objective:** Reconstruct span
+        * `<X> teaches the`
+    * Good use cases:
+        * Translation
+        * Text summarization
+        * Question answering
+    * Example models: T5, BART
+#### 1.2.2. Computational challenges of training LLMs
+* CUDA: Compute Unified Device Architecture
+* GPU RAM computation:
+    * $1~parameter = 4~bytes~(32$-$bit~float) $
+    * $1B~parameters = 4*10^9~bytes = 4GB$
+        * 4GB @ 32-bit full precision
+
+    ||Bytes per parameter|
+    |:-|:-:|
+    |Model Parameters (Weights) | 4 bytes per parameter|
+    |Adam optimizer (2 states)|+8 b.p.p.|
+    |Gradients|+4 b.p.p.|
+    |Activations and <br>temporary memory|+8 bpp (high-end estimate)|
+    |**TOTAL**|$=4~b.p.p. + {\scriptsize\sim}20~extra~b.p.p.$|
+    * So, while we need 4GB memory to store the model, counting all these overhead in the training, we actually need ~80GB of memory (a single _Nvidia A100 GPU_ for instance) to train the model.
+* There are techniques to reduce the memory required.
+* **Quantization**
+    * 
