@@ -147,9 +147,23 @@
     |Model Parameters (Weights) | 4 bytes per parameter|
     |Adam optimizer (2 states)|+8 b.p.p.|
     |Gradients|+4 b.p.p.|
-    |Activations and <br>temporary memory|+8 bpp (high-end estimate)|
+    |Activations and <br>temporary memory|+8 b.p.p. (high-end estimate)|
     |**TOTAL**|$=4~b.p.p. + {\scriptsize\sim}20~extra~b.p.p.$|
     * So, while we need 4GB memory to store the model, counting all these overhead in the training, we actually need ~80GB of memory (a single _Nvidia A100 GPU_ for instance) to train the model.
 * There are techniques to reduce the memory required.
-* **Quantization**
-    * 
+* **Quantization:** Reducing required memory to store and train models by projecting numbers into lower precision _(a.k.a. mantissa/significand)_ spaces (e.g. ``FP32`` to `BFLOAT16`).
+    ||Bits|Exponent|Fraction|Memory needed<br>to store one value|
+    |:-|:-:|:-:|:-:|:-:|
+    |**FP32**|32|8|23|4 byte|
+    |**FP16**|16|5|10|2 byte|
+    |**BFLOAT16**|16|8|7|2 byte|
+    |**INT8**|8|-|7|1 byte|
+    * Oh, by the way, remember that:
+    <br>![fp-basics.jpg](.\assets\fp-basics.jpg)
+    * Projects original 32-bit floating point numbers into lower precision space.
+    * Quantization-aware training (QAT) learns the quantization scaling factors during training.
+    * ``BFLOAT16``/`BF16` is a popular choice (`B` stands for _brain_ which refers to ***Google Brain*** team).
+        * BF16 significantly helps with training stability and is supported by newer GPU's such as NVIDIA's A100, as it captures the full dynamic range of the full 32-bit float, that uses only 16-bits.
+        * Not good at calculating integers but it's rare in deep learning anyway.
+#### 1.2.3. Efficient multi-GPU compute strategies
+* 
