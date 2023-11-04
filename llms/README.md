@@ -166,4 +166,23 @@
         * BF16 significantly helps with training stability and is supported by newer GPU's such as NVIDIA's A100, as it captures the full dynamic range of the full 32-bit float, that uses only 16-bits.
         * Not good at calculating integers but it's rare in deep learning anyway.
 #### 1.2.3. Efficient multi-GPU compute strategies
-* 
+* **Q:** Which of the following best describes the role of data parallelism in the context of training Large Language Models (LLMs) with GPUs?
+    * Data parallelism allows for the use of multiple GPUs to process different parts of the same data simultaneously, speeding up training time. It is a strategy that splits the training data across multiple GPUs. Each GPU processes a different subset of the data simultaneously, which can greatly speed up the overall training time.
+* Either your model is too big to fit in a single GPU, or your dataset is very large and you want to distribute it to multiple GPUs and train them in parallel to save time.
+* ``Distributed Data Parallel (DDP)``
+    * Dataloader splits the data,
+    * Sends them to multiple GPUs,
+    * Each one of them has their own forward/backward pass operations,
+    * The gradients are ***synchronized***,
+    * Each model in these separate GPUs gets updated.
+        * Note that in DDP, your model (model weights, gradients, optimizer states and all the other parameters) fits onto a single GPU.
+* **Model Sharding**
+    * One of the popular implementations is ***Pytorch's Fully Sharded Data Parallel (FSDP)*** 
+        * [PyTorch FSDP paper](https://arxiv.org/abs/2304.11277) is motivated by the ["ZeRO" paper](https://arxiv.org/abs/1910.02054) - zero data overlap between GPUs.
+    * In DDP, there are one full copy of model and training parameters on each GPU.
+    * In **Zero Redundancy Optimizer (ZeRO)**, the memory is reduced by distributing (sharding) the model parameters, gradients and optimizer states across GPUs.
+        * ZeRO Stage 1: Only optimizer states are sharded (not the parameters and gradients. Each GPU has them all). This reduces memory footprint by up to a factor of 4.
+        * ZeRO Stage 2: Also shards the gradients. Reduces memory up to 8 times.
+        * ZeRO Stage 3: Shards model parameters as well. Since everything is sharded across GPUs, memory consumption is linear with the number of GPUs.
+    * Each GPU requests data (weights etc.) from other GPUs on-demand to materialize the sharded data into unsharded data for the duration of the operation. After the operation, it's sent back to other GPUs.
+    * 
