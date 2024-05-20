@@ -85,7 +85,7 @@
     In summary, the temperature parameter is crucial when sampling from language models, offering a balance between randomness (exploration) and adhering to the most likely outputs (exploitation).
     ***
 * As far as I understand, this is meaningful when `random sampling` takes place. When it's a greedy choice, the model picks the highest probability anyway no matter what the distribution indicates since the weighted probabilities don't affect the order.
-![temperature_config.png](assets/temperature_config.png)
+![./assets/temperature_config.png](https://github.com/gulmert89/studyRoom_generative/blob/bbdafd4e023bbb1d4a73a0b2ab0a9d412b1ec9fc/llms/assets/temperature_config.png?raw=true)
 #### 1.1.7. Generative AI project lifecycle
 * Define your task first: Essay writing, summarization, translation, information retrieval, invoke APIs and actions etc.
 * Lifecycle:
@@ -159,7 +159,7 @@
     |**BFLOAT16**|16|8|7|2 byte|
     |**INT8**|8|-|7|1 byte|
     * Oh, by the way, remember that:
-    <br>![fp-basics.jpg](.\assets\fp-basics.jpg)
+    <br>![.\assets\fp-basics.jpg](https://raw.githubusercontent.com/gulmert89/studyRoom_generative/main/llms/assets/fp-basics.jpg)
     * Projects original 32-bit floating point numbers into lower precision space.
     * Quantization-aware training (QAT) learns the quantization scaling factors during training.
     * ``BFLOAT16``/`BF16` is a popular choice (`B` stands for _brain_ which refers to ***Google Brain*** team).
